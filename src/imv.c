@@ -191,6 +191,8 @@ void command_fullscreen(struct list *args, const char *argstr, void *data);
 void command_overlay(struct list *args, const char *argstr, void *data);
 void command_exec(struct list *args, const char *argstr, void *data);
 void command_center(struct list *args, const char *argstr, void *data);
+void command_top(struct list *args, const char *argstr, void *data);
+void command_bottom(struct list *args, const char *argstr, void *data);
 void command_reset(struct list *args, const char *argstr, void *data);
 void command_next_frame(struct list *args, const char *argstr, void *data);
 void command_toggle_playing(struct list *args, const char *argstr, void *data);
@@ -395,6 +397,8 @@ struct imv *imv_create(void)
   imv_command_register(imv->commands, "overlay", &command_overlay);
   imv_command_register(imv->commands, "exec", &command_exec);
   imv_command_register(imv->commands, "center", &command_center);
+  imv_command_register(imv->commands, "top", &command_top);
+  imv_command_register(imv->commands, "bottom", &command_bottom);
   imv_command_register(imv->commands, "reset", &command_reset);
   imv_command_register(imv->commands, "next_frame", &command_next_frame);
   imv_command_register(imv->commands, "toggle_playing", &command_toggle_playing);
@@ -1565,6 +1569,22 @@ void command_center(struct list *args, const char *argstr, void *data)
   (void)argstr;
   struct imv *imv = data;
   imv_viewport_center(imv->view, imv->image);
+}
+
+void command_top(struct list *args, const char *argstr, void *data)
+{
+  (void)args;
+  (void)argstr;
+  struct imv *imv = data;
+  imv_viewport_top(imv->view, imv->image);
+}
+
+void command_bottom(struct list *args, const char *argstr, void *data)
+{
+  (void)args;
+  (void)argstr;
+  struct imv *imv = data;
+  imv_viewport_bottom(imv->view, imv->image);
 }
 
 void command_reset(struct list *args, const char *argstr, void *data)

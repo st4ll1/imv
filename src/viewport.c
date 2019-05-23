@@ -193,6 +193,34 @@ void imv_viewport_center(struct imv_viewport *view, const struct imv_image *imag
   view->redraw = 1;
 }
 
+void imv_viewport_top(struct imv_viewport *view, const struct imv_image *image)
+{
+  int ww, wh;
+  SDL_GetWindowSize(view->window, &ww, &wh);
+
+  const int image_width = imv_image_width(image);
+
+  view->x = (ww - image_width * view->scale) / 2;
+  view->y = 0;
+
+  view->locked = 1;
+  view->redraw = 1;
+}
+
+void imv_viewport_bottom(struct imv_viewport *view, const struct imv_image *image)
+{
+  int ww, wh;
+  SDL_GetWindowSize(view->window, &ww, &wh);
+
+  const int image_width = imv_image_width(image);
+  const int image_height = imv_image_height(image);
+
+  view->x = (ww - image_width * view->scale) / 2;
+  view->y = (wh - image_height * view->scale);
+
+  view->locked = 1;
+  view->redraw = 1;
+}
 void imv_viewport_scale_to_window(struct imv_viewport *view, const struct imv_image *image)
 {
   int ww, wh;
