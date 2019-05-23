@@ -51,6 +51,14 @@ void imv_viewport_zoom(struct imv_viewport *view, const struct imv_image *image,
 void imv_viewport_center(struct imv_viewport *view,
                          const struct imv_image *image);
 
+/* Recenter the view to be in the top of the image */
+void imv_viewport_top(struct imv_viewport *view,
+                         const struct imv_image *image);
+
+/* Recenter the view to be in the bottom of the image */
+void imv_viewport_bottom(struct imv_viewport *view,
+                         const struct imv_image *image);
+
 /* Scale the view so that the image appears at its actual resolution */
 void imv_viewport_scale_to_actual(struct imv_viewport *view,
                                   const struct imv_image *image);
