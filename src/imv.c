@@ -182,6 +182,7 @@ struct imv {
 
 void command_quit(struct list *args, const char *argstr, void *data);
 void command_pan(struct list *args, const char *argstr, void *data);
+void command_set(struct list *args, const char *argstr, void *data);
 void command_select_rel(struct list *args, const char *argstr, void *data);
 void command_select_abs(struct list *args, const char *argstr, void *data);
 void command_zoom(struct list *args, const char *argstr, void *data);
@@ -388,6 +389,7 @@ struct imv *imv_create(void)
 
   imv_command_register(imv->commands, "quit", &command_quit);
   imv_command_register(imv->commands, "pan", &command_pan);
+  imv_command_register(imv->commands, "set", &command_set);
   imv_command_register(imv->commands, "select_rel", &command_select_rel);
   imv_command_register(imv->commands, "select_abs", &command_select_abs);
   imv_command_register(imv->commands, "zoom", &command_zoom);
@@ -496,8 +498,14 @@ static bool parse_bg(struct imv *imv, const char *bg)
 {
   if(strcmp("checks", bg) == 0) {
     imv->background_type = BACKGROUND_CHEQUERED;
+    /* construct a chequered background image */
+    imv->background_image = create_chequered(imv->renderer);
   } else {
     imv->background_type = BACKGROUND_SOLID;
+    if(imv->background_image) {
+      /* destroy the chequered background image */
+      SDL_DestroyTexture(imv->background_image);
+    }
     if(*bg == '#')
       ++bg;
     char *ep;
@@ -664,7 +672,7 @@ bool imv_parse_args(struct imv *imv, int argc, char **argv)
         print_help(imv);
         imv->quit = true;
         return true;
-      case 'v': 
+      case 'v':
         printf("Version: %s\n", IMV_VERSION);
           imv->quit = true;
           return false;
@@ -992,10 +1000,6 @@ static bool setup_window(struct imv *imv)
   SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS,
       imv->stay_fullscreen_on_focus_loss ? "0" : "1");
 
-  /* construct a chequered background image */
-  if(imv->background_type == BACKGROUND_CHEQUERED) {
-    imv->background_image = create_chequered(imv->renderer);
-  }
 
   /* set up the required fonts and surfaces for displaying the overlay */
   TTF_Init();
@@ -1442,6 +1446,18 @@ void command_quit(struct list *args, const char *argstr, void *data)
   (void)argstr;
   struct imv *imv = data;
   imv->quit = true;
+}
+
+void command_set(struct list *args, const char *argstr, void *data)
+{
+  (void)argstr;
+  struct imv *imv = data;
+  if(args->len != 3) {
+    return;
+  }
+
+  handle_ini_value(imv, "options", args->items[1], args->items[2]);
+  imv->need_redraw = true;
 }
 
 void command_pan(struct list *args, const char *argstr, void *data)
